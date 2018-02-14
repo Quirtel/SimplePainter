@@ -25,10 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    paintfield.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    paintfield.h
 
 FORMS += \
         mainwindow.ui
