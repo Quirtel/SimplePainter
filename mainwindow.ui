@@ -122,8 +122,14 @@
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <widget class="QScrollArea" name="scrollArea">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
         <property name="lineWidth">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="widgetResizable">
          <bool>true</bool>
@@ -134,7 +140,7 @@
            <x>0</x>
            <y>0</y>
            <width>696</width>
-           <height>545</height>
+           <height>551</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2"/>

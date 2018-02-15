@@ -16,11 +16,14 @@ class PaintField : public QWidget
 {
     Q_OBJECT
 public:
-    explicit PaintField(QWidget *parent = nullptr);
+    friend class GraphView;
+    explicit PaintField(QWidget *parent = nullptr, const QString &fn = "");
     void resizeImage(int factor);
-
-private:
+    void undo();
+    void redo();
     GraphView *graphView;
+
+    QString filename;
 };
 
 
@@ -34,12 +37,6 @@ public:
     GraphView(QWidget *parent = nullptr) {
 
     }
-
-protected:
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-
-private:
     QPixmap *image;
     QGridLayout *layout;
     QPainter pa;
@@ -47,6 +44,14 @@ private:
 
     QGraphicsScene *graphScene;
     QPoint prev_pos;
+    QList<QGraphicsItem *> temp;
+
+protected:
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+
+private:
+
 };
 
 #endif // PAINTFIELD_H
