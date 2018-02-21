@@ -8,14 +8,14 @@
 
 PaintField::PaintField(QWidget *parent, const QString &fn) : QWidget(parent), filename(fn)
 {
-    graphView = new GraphView(this);
+    graphView = new GraphView();
 
     graphView->layout = new QGridLayout(this);
 
     if (filename.isEmpty())
     {
         graphView->image = new QPixmap(640,480);
-        graphView->image->fill(Qt::black);
+        graphView->image->fill(Qt::white);
     }
     else
     {
@@ -30,13 +30,20 @@ PaintField::PaintField(QWidget *parent, const QString &fn) : QWidget(parent), fi
     qDebug() << graphView->image->devicePixelRatio();
 
     graphView->layout->addWidget(graphView);
-    graphView->show();
+    graphView->setStyleSheet("border:2px solid black;");
     qDebug() << graphView->image->width();
+
 }
 
 void PaintField::resizeImage(int factor)
-{
-    graphView->scale(factor * 0.1 ,factor * 0.1);
+{ //TODO: complete the resize feature
+    if (prev_factor < factor)
+        graphView->scale(1.1 ,1.1);
+    else if (prev_factor > factor)
+        graphView->scale(1 / 1.1 , 1 / 1.1);
+    else if (prev_factor == 0 || factor == 0)
+        graphView->scale(1,1);
+    prev_factor = factor;
 }
 
 void PaintField::undo()
@@ -48,7 +55,8 @@ void PaintField::undo()
     }
 }
 
-void PaintField::redo(){
+void PaintField::redo()
+{
     if (!graphView->temp.isEmpty())
     {
         graphView->graphScene->addItem(graphView->temp.last());
@@ -58,28 +66,43 @@ void PaintField::redo(){
 
 void GraphView::mousePressEvent(QMouseEvent *event)
 {
-    pen.setColor(Qt::white);
     pen.setWidth(6);
 
     auto map = mapToScene(event->pos().x(),event->pos().y());
-    pen.setCapStyle(Qt::RoundCap);
+    if (map.x() <= this->image->width() && map.x() >= 0 && map.y() >= 0 && map.y() <= this->image->height())
+    {
+        if(event->modifiers() == Qt::ShiftModifier)
+        {
+            pen.setCapStyle(Qt::RoundCap);
+            this->graphScene->addLine(QLineF(mapToScene(prev_pos),mapToScene(event->pos().x(), event->pos().y())), pen);
 
-    this->graphScene->addEllipse(map.x(), map.y(), 2,2, pen, QBrush(Qt::white, Qt::SolidPattern));
+            prev_pos = event->pos();
+        }
+        else
+        {
+            pen.setCapStyle(Qt::RoundCap);
+            this->graphScene->addEllipse(map.x(), map.y(), 2,2, pen, QBrush(Qt::white, Qt::SolidPattern));
 
-    prev_pos = event->pos();
+            prev_pos = event->pos();
+        }
+    }
 }
 
 void GraphView::mouseMoveEvent(QMouseEvent *event)
 {
     if (event->buttons() == Qt::LeftButton)
     {
-        pen.setColor(Qt::white);
-        pen.setWidth(6);
-        pen.setCapStyle(Qt::RoundCap);
+        auto map = mapToScene(event->pos().x(),event->pos().y());
+        qDebug() << map;
+        if (map.x() <= this->image->width() && map.x() >= 0 && map.y() >= 0 && map.y() <= this->image->height())
+        {
+            pen.setWidth(6);
+            pen.setCapStyle(Qt::RoundCap);
 
-        this->graphScene->addLine(QLineF(mapToScene(prev_pos),mapToScene(event->pos().x(), event->pos().y())), pen);
+            this->graphScene->addLine(QLineF(mapToScene(prev_pos),mapToScene(event->pos().x(), event->pos().y())), pen);
 
-        prev_pos = event->pos();
-        event->accept();
+            prev_pos = event->pos();
+            event->accept();
+        }
     }
 }

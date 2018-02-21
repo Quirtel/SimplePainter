@@ -41,15 +41,30 @@ private slots:
 
     void on_actionDashDot_triggered();
 
+    void on_actionUndo_triggered();
+
+    void on_actionRedo_triggered();
+
+    void on_actionNew_triggered();
+
+    void on_actionSave_triggered();
+
+    void on_actionOpen_triggered();
+
+    void on_actionColor_2_triggered();
+
+    void on_pushButton_color_clicked();
+
 protected:
     void mouseMoveEvent(QMouseEvent *event);
 
 private:
     Ui::MainWindow *ui;
-    PaintField *field;
-    QGridLayout *layout;
+    PaintField *field = nullptr;
+    QGridLayout *layout = nullptr;
     QLabel coords;
     QString filename;
+    bool picture_modified = false;
 };
 
 #endif // MAINWINDOW_H

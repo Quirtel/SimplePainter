@@ -22,8 +22,10 @@ public:
     void undo();
     void redo();
     GraphView *graphView;
+    int prev_factor = 0;
 
     QString filename;
+
 };
 
 
@@ -34,9 +36,6 @@ class GraphView : public QGraphicsView
     Q_OBJECT
 public:
     friend class PaintField;
-    GraphView(QWidget *parent = nullptr) {
-
-    }
     QPixmap *image;
     QGridLayout *layout;
     QPainter pa;
@@ -51,6 +50,9 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
 
 private:
+
+signals:
+    void pic_modified();
 
 };
 

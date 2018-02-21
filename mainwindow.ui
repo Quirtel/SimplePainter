@@ -10,6 +10,9 @@
     <height>652</height>
    </rect>
   </property>
+  <property name="mouseTracking">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -28,7 +31,17 @@
            </size>
           </property>
           <property name="text">
-           <string>New</string>
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="res.qrc">
+            <normaloff>:/new/picture/new-tab.png</normaloff>:/new/picture/new-tab.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>100</width>
+            <height>128</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -41,7 +54,17 @@
            </size>
           </property>
           <property name="text">
-           <string>Open</string>
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="res.qrc">
+            <normaloff>:/new/picture/icons8-open-512.png</normaloff>:/new/picture/icons8-open-512.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>128</width>
+            <height>128</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -54,7 +77,17 @@
            </size>
           </property>
           <property name="text">
-           <string>Save</string>
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="res.qrc">
+            <normaloff>:/new/picture/save-file-option.png</normaloff>:/new/picture/save-file-option.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>100</width>
+            <height>128</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -67,7 +100,17 @@
            </size>
           </property>
           <property name="text">
-           <string>Color</string>
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="res.qrc">
+            <normaloff>:/new/picture/color-palette.png</normaloff>:/new/picture/color-palette.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>100</width>
+            <height>128</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -84,7 +127,17 @@
            </size>
           </property>
           <property name="text">
-           <string>undo</string>
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="res.qrc">
+            <normaloff>:/new/picture/undo.png</normaloff>:/new/picture/undo.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -97,7 +150,17 @@
            </size>
           </property>
           <property name="text">
-           <string>redo</string>
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="res.qrc">
+            <normaloff>:/new/picture/redo.png</normaloff>:/new/picture/redo.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -139,8 +202,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>696</width>
-           <height>551</height>
+           <width>667</width>
+           <height>545</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2"/>
@@ -150,7 +213,7 @@
       <item>
        <widget class="QSlider" name="horizontalSlider">
         <property name="minimum">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="maximum">
          <number>100</number>
@@ -186,6 +249,9 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionNew"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -206,8 +272,8 @@
      <addaction name="menuStyle"/>
      <addaction name="actionColor_2"/>
     </widget>
-    <addaction name="actionStyle"/>
-    <addaction name="actionColor"/>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
     <addaction name="separator"/>
     <addaction name="menuPen"/>
    </widget>
@@ -215,14 +281,20 @@
    <addaction name="menuEdit"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionStyle">
+  <action name="actionUndo">
    <property name="text">
     <string>Undo</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
   </action>
-  <action name="actionColor">
+  <action name="actionRedo">
    <property name="text">
     <string>Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Z</string>
    </property>
   </action>
   <action name="actionColor_2">
@@ -245,8 +317,34 @@
     <string>DashDot</string>
    </property>
   </action>
+  <action name="actionNew">
+   <property name="text">
+    <string>New</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections/>
 </ui>

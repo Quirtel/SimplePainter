@@ -8,6 +8,8 @@
 #include <QGridLayout>
 #include <QtCore>
 #include <QFileDialog>
+#include <QMessageBox>
+#include <QColorDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -15,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->statusBar->addWidget(&coords);
+    this->setMouseTracking(true);
     coords.show();
 }
 
@@ -25,9 +28,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_new_clicked()
 {
-    field = new PaintField(this);
-    ui->scrollArea->setWidget(field);
-    field->show();
+    ui->actionNew->trigger();
 }
 
 void MainWindow::on_horizontalSlider_valueChanged(int value)
@@ -50,44 +51,22 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
 void MainWindow::on_pushButton_undo_clicked()
 {
-    field->undo();
+    ui->actionUndo->trigger();
 }
 
 void MainWindow::on_pushButton_redo_clicked()
 {
-    field->redo();
+    ui->actionRedo->trigger();
 }
 
 void MainWindow::on_pushButton_save_clicked()
 {
-    if (!filename.isEmpty())
-    {
-        QImage image(field->graphView->graphScene->sceneRect().size().toSize(), QImage::Format_ARGB32);
-        QPainter painter(&image);
-
-        field->graphView->graphScene->render(&painter);
-        painter.end();
-
-        image.save(filename,"PNG");
-    }
-    else
-    {
-        filename = QFileDialog::getSaveFileName(this, "Save picture", "", "All Files(*)");
-        QImage image(field->graphView->graphScene->sceneRect().size().toSize(), QImage::Format_ARGB32);
-        QPainter painter(&image);
-
-        field->graphView->graphScene->render(&painter);
-        painter.end();
-        image.save(filename,"PNG");
-    }
+    ui->actionSave->trigger();
 }
 
 void MainWindow::on_pushButton_open_clicked()
 {
-    filename = QFileDialog::getOpenFileName(this, "Open picture", "", "All Files(*)");
-    field = new PaintField(this, this->filename);
-    ui->scrollArea->setWidget(field);
-    field->show();
+    ui->actionOpen->trigger();
 }
 
 void MainWindow::on_actionSolid_triggered()
@@ -112,4 +91,128 @@ void MainWindow::on_actionDashDot_triggered()
     {
         field->graphView->pen.setStyle(Qt::DashDotLine);
     }
+}
+
+void MainWindow::on_actionUndo_triggered()
+{
+    if (field != nullptr)
+        field->undo();
+}
+
+void MainWindow::on_actionRedo_triggered()
+{
+    if (field != nullptr)
+        field->redo();
+}
+
+void MainWindow::on_actionNew_triggered()
+{
+    if (picture_modified){
+        QMessageBox msgBox;
+        msgBox.setText("The document has been modified.");
+        msgBox.setInformativeText("Do you want to save your changes?");
+        msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Save);
+        int ret = msgBox.exec();
+        switch (ret) {
+        case QMessageBox::Save:
+            picture_modified = false;
+            ui->actionSave->trigger();
+            break;
+        case QMessageBox::Discard:
+            break;
+        case QMessageBox::Cancel:
+            return;
+            break;
+        }
+    }
+
+    if (field != nullptr)
+    {
+        delete field;
+        field = nullptr;
+    }
+
+    field = new PaintField(this);
+    ui->scrollArea->setWidget(field);
+    field->show();
+    picture_modified = true;
+    connect(field->graphView, &GraphView::pic_modified, this, [&]() {
+        picture_modified = false;
+    });
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+    if (!filename.isEmpty())
+    {
+        QImage image(field->graphView->graphScene->sceneRect().size().toSize(), QImage::Format_ARGB32);
+        QPainter painter(&image);
+
+        field->graphView->graphScene->render(&painter);
+        painter.end();
+
+        image.save(filename,"PNG");
+    }
+    else
+    {
+        filename = QFileDialog::getSaveFileName(this, "Save picture", "", "All Files(*)");
+        if (!filename.isEmpty())
+        {
+            QImage image(field->graphView->graphScene->sceneRect().size().toSize(), QImage::Format_ARGB32);
+            QPainter painter(&image);
+
+            field->graphView->graphScene->render(&painter);
+            painter.end();
+            image.save(filename,"PNG");
+        }
+    }
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+    if (picture_modified){
+        QMessageBox msgBox;
+        msgBox.setText("The document has been modified.");
+        msgBox.setInformativeText("Do you want to save your changes?");
+        msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Save);
+        int ret = msgBox.exec();
+        switch (ret) {
+        case QMessageBox::Save:
+            picture_modified = false;
+            ui->actionSave->trigger();
+            break;
+        case QMessageBox::Discard:
+            picture_modified = false;
+            break;
+        case QMessageBox::Cancel:
+            return;
+            break;
+        }
+    }
+
+    filename = QFileDialog::getOpenFileName(this, "Open picture", "", "All Files(*)");
+    if (!filename.isEmpty())
+    {
+        field = new PaintField(this, this->filename);
+        ui->scrollArea->setWidget(field);
+        field->show();
+        connect(field->graphView, &GraphView::pic_modified, this, [&]() {
+            picture_modified = false;
+        });
+    }
+    picture_modified = false;
+}
+
+void MainWindow::on_actionColor_2_triggered()
+{
+
+    QColor color = QColorDialog::getColor(Qt::white,this,"", QColorDialog::DontUseNativeDialog);
+    this->field->graphView->pen.setColor(color);
+}
+
+void MainWindow::on_pushButton_color_clicked()
+{
+    ui->actionColor_2->trigger();
 }
