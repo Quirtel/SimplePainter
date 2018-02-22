@@ -65,6 +65,7 @@ private:
     QLabel coords;
     QString filename;
     bool picture_modified = false;
+    void create_field();
 };
 
 #endif // MAINWINDOW_H

@@ -120,6 +120,7 @@ void MainWindow::on_actionNew_triggered()
             ui->actionSave->trigger();
             break;
         case QMessageBox::Discard:
+            ui->actionNew->trigger();
             break;
         case QMessageBox::Cancel:
             return;
@@ -127,19 +128,8 @@ void MainWindow::on_actionNew_triggered()
         }
     }
 
-    if (field != nullptr)
-    {
-        delete field;
-        field = nullptr;
-    }
 
-    field = new PaintField(this);
-    ui->scrollArea->setWidget(field);
-    field->show();
-    picture_modified = true;
-    connect(field->graphView, &GraphView::pic_modified, this, [&]() {
-        picture_modified = false;
-    });
+    create_field();
 }
 
 void MainWindow::on_actionSave_triggered()
@@ -185,29 +175,25 @@ void MainWindow::on_actionOpen_triggered()
             break;
         case QMessageBox::Discard:
             picture_modified = false;
+            ui->actionOpen->trigger();
             break;
         case QMessageBox::Cancel:
             return;
             break;
         }
     }
-
-    filename = QFileDialog::getOpenFileName(this, "Open picture", "", "All Files(*)");
-    if (!filename.isEmpty())
-    {
-        field = new PaintField(this, this->filename);
-        ui->scrollArea->setWidget(field);
-        field->show();
-        connect(field->graphView, &GraphView::pic_modified, this, [&]() {
-            picture_modified = false;
-        });
+    else {
+        filename = QFileDialog::getOpenFileName(this, "Open picture", "", "All Files(*)");
+        if (!filename.isEmpty())
+        {
+            create_field();
+        }
+        picture_modified = false;
     }
-    picture_modified = false;
 }
 
 void MainWindow::on_actionColor_2_triggered()
 {
-
     QColor color = QColorDialog::getColor(Qt::white,this,"", QColorDialog::DontUseNativeDialog);
     this->field->graphView->pen.setColor(color);
 }
@@ -215,4 +201,20 @@ void MainWindow::on_actionColor_2_triggered()
 void MainWindow::on_pushButton_color_clicked()
 {
     ui->actionColor_2->trigger();
+}
+
+void MainWindow::create_field()
+{
+    if (field != nullptr)
+    {
+        delete field;
+        field = nullptr;
+    }
+
+    field = new PaintField(this, this->filename);
+    ui->scrollArea->setWidget(field);
+    field->show();
+    connect(field->graphView, &GraphView::pic_modified, this, [&]() {
+        picture_modified = false;
+    });
 }

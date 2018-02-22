@@ -19,7 +19,7 @@ PaintField::PaintField(QWidget *parent, const QString &fn) : QWidget(parent), fi
     }
     else
     {
-        graphView->image = new QPixmap(filename);
+        graphView->image = new QPixmap(filename, "PNG");
     }
 
     graphView->graphScene = new QGraphicsScene(this);
@@ -31,6 +31,7 @@ PaintField::PaintField(QWidget *parent, const QString &fn) : QWidget(parent), fi
 
     graphView->layout->addWidget(graphView);
     graphView->setStyleSheet("border:2px solid black;");
+    graphView->show();
     qDebug() << graphView->image->width();
 
 }
